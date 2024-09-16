@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "dl-accrodian-client-side-solution",
+    "id": "c3e34f53-c60d-4cd6-bedd-b8da8a62b45f",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.18.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "dl-accrodian description"
+      },
+      "longDescription": {
+        "default": "dl-accrodian description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "dl-accrodian Feature",
+        "description": "The feature that activates elements of the dl-accrodian solution.",
+        "id": "a18c662b-d450-4737-afc4-38484312b8b2",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/dl-accrodian.sppkg"
+  }
+}
