@@ -8,6 +8,7 @@ export interface IDlaccrodianProps {
   context: WebPartContext;
   listId: string;
   listAccordianColumns: any;
-  columnsToShow: any;
-  terms: any;
+  columnsToShow1: any;
+  columnsToShow2: any;
+  columnsToShow3: any;
 }

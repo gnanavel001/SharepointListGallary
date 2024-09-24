@@ -4,19 +4,30 @@ body {
 
 .accordion {
   background-color: #ffffff;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  box-shadow: rgba(0, 0, 0, 0.25) 2px 4px 8px;
   padding: 30px;
   border-radius: 10px;
 
   .header {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    justify-content: center;
     padding-right: 5px;
 
     .search {
-      margin-right: 20px;
+      margin-left: 10px;
       position: relative;
+
+      .searchInputShow {
+        display: block;
+        z-index: 100;
+        top: 9px;
+        left: 5px;
+        position: absolute;
+      }
+
+      .searchInputDisable {
+        display: none;
+      }
 
       input {
         background-color: #f6f6f6;
@@ -51,11 +62,7 @@ body {
         position: absolute;
       }
     }
-    .termstoreInput {
-      max-width: 300px;
-      word-wrap: break-word;
-      overflow-x: auto;
-    }
+
     button {
       background-color: #0078d4;
       color: #ffffff;
@@ -69,27 +76,52 @@ body {
   details {
     margin-block: 10px;
     transition: transform 250ms;
+    background-color: #ffffff;
+    border-radius: 10px;
 
     &:hover {
       transform: translateZ(-10px);
     }
 
-    & > summary {
+    &>summary {
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
       list-style: none;
-      padding-block: 15px;
+      padding-block: 5px;
       padding-inline: 25px;
-      background-color: #f3f4f9;
+      background-color: #ffffff;
+      box-shadow: rgba(0, 0, 0, 0.25) 2px 4px 8px;
       border-radius: 10px;
 
-      &:is(.open) {
+      .summary-title {
+        display: flex;
+        align-items: center;
+        -moz-column-gap: 5px;
+        column-gap: 5px;
+      }
+
+      .parent-title {
+        text-transform: capitalize;
+      }
+
+      .parent-summary {
+        background-color: #76e2ee;
+        border-radius: 10px;
+        font-weight: 700;
+      }
+
+      &:is(.parent-summary):is(.open) {
         border-left: 4px solid blue;
       }
 
-      & > p {
+      &:not(:is(.parent-summary)) {
+        color: gray;
+        font-weight: 600;
+      }
+
+      &>p {
         padding: 0;
         margin: 0;
       }
@@ -124,40 +156,68 @@ body {
   }
 }
 
-.accordion details > summary::marker,
-.accordion details > summary::-webkit-details-marker {
+.accordion details>summary::marker,
+.accordion details>summary::-webkit-details-marker {
   display: none;
 }
 
-.card {
-  background-color: #f0f2f9;
-  border-radius: 7px;
-  padding: 15px 20px;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+.cards-container {
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  text-align: end;
+  gap: 15px;
+  margin-top: 20px;
+  margin-bottom: 30px;
 
-  button {
-    width: 45px;
-    border: 1px solid rgb(108, 105, 105);
-  }
+  .card {
+    width: 200px;
+    height: 130px;
+    background-color: #f0f2f9;
+    border-radius: 7px;
+    padding: 15px 20px;
+    box-shadow: rgba(0, 0, 0, 0.25) 2px 4px 8px;
 
-  & > p {
-    padding: 0;
-    margin: 0;
-    flex: 1;
-  }
+    .icon {
+      display: flex;
+      cursor: pointer;
 
-  &:first-of-type {
-    margin-top: 10px;
-  }
+      svg {
+        width: 35px;
+        padding-right: 20px;
+      }
 
-  &:not(:first-of-type) {
-    margin-top: 7px;
+      .title {
+        font-weight: 600;
+        color: #0078d4;
+        text-transform: capitalize;
+        width: 180px;
+        height: 50px;
+        word-wrap: break-word;
+        overflow: hidden;
+      }
+    }
+
+
+
+    .content {
+      display: flex;
+      align-items: center;
+      -moz-column-gap: 20px;
+      column-gap: 20px;
+      height: 4px;
+
+      .sopRefrence {
+        width: 160px;
+      }
+
+      .location {
+        width: 40px;
+      }
+    }
   }
 }
+
 
 .open {
   border-left: 4px solid blue;
@@ -166,4 +226,11 @@ body {
 .vewbutton {
   background-color: #0078d4;
   color: #ffffff;
+}
+
+@media only screen and (max-width: 700px) {
+  .cards-container {
+    justify-content: center;
+  }
+
 }

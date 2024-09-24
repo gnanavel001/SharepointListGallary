@@ -7,8 +7,6 @@ import {
 } from "@microsoft/sp-property-pane";
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import { IReadonlyTheme } from "@microsoft/sp-component-base";
-import { PropertyFieldTermPicker } from "@pnp/spfx-property-controls/lib/PropertyFieldTermPicker";
-import { IPickerTerms } from "@pnp/spfx-property-controls/lib/PropertyFieldTermPicker";
 
 import * as strings from "DlaccrodianWebPartStrings";
 import Dlaccrodian from "./components/Dlaccrodian";
@@ -28,8 +26,9 @@ export interface IDlaccrodianWebPartProps {
   Title: string;
   listId: string;
   listAccordianColumns: any;
-  columnsToShow: string;
-  terms: IPickerTerms;
+  columnsToShow1: string;
+  columnsToShow2: string;
+  columnsToShow3: string;
 }
 export interface IPropertyControlsTestWebPartProps {
   lists: string; // Stores the list ID(s)
@@ -56,8 +55,9 @@ export default class DlaccrodianWebPart extends BaseClientSideWebPart<IDlaccrodi
         context: this.context,
         listId: this.properties.listId,
         listAccordianColumns: this.properties.listAccordianColumns,
-        columnsToShow: this.properties.columnsToShow,
-        terms: this.properties.terms,
+        columnsToShow1: this.properties.columnsToShow1,
+        columnsToShow2: this.properties.columnsToShow2,
+        columnsToShow3: this.properties.columnsToShow3,
       }
     );
 
@@ -185,37 +185,53 @@ export default class DlaccrodianWebPart extends BaseClientSideWebPart<IDlaccrodi
                   deferredValidationTime: 0,
                   key: "listAccordianColumns",
                   displayHiddenColumns: false,
-                  columnReturnProperty: IColumnReturnProperty.Title,
+                  columnReturnProperty: IColumnReturnProperty["Internal Name"],
                   multiSelect: true,
                 }),
-                PropertyFieldColumnPicker("columnsToShow", {
-                  label: "Select columns",
+                PropertyFieldColumnPicker("columnsToShow1", {
+                  label: "Select column to show in left side",
                   context: this.context as any,
-                  selectedColumn: this.properties.columnsToShow,
+                  selectedColumn: this.properties.columnsToShow1,
                   listId: this.properties.listId,
                   disabled: false,
                   orderBy: PropertyFieldColumnPickerOrderBy.Title,
                   onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
                   properties: this.properties,
                   deferredValidationTime: 0,
-                  key: "columnsToShow",
+                  key: "columnsToShow1",
                   displayHiddenColumns: false,
-                  columnReturnProperty: IColumnReturnProperty.Title,
-                  multiSelect: true,
+                  columnReturnProperty: IColumnReturnProperty["Internal Name"],
+                  multiSelect: false,
                 }),
-                PropertyFieldTermPicker("terms", {
-                  label: "Select terms",
-                  panelTitle: "Select terms",
-                  initialValues: this.properties.terms,
-                  allowMultipleSelections: false,
-                  isTermSetSelectable: true,
-                  excludeSystemGroup: false,
-                  onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties,
+                PropertyFieldColumnPicker("columnsToShow2", {
+                  label: "Select column to show in right side",
                   context: this.context as any,
+                  selectedColumn: this.properties.columnsToShow2,
+                  listId: this.properties.listId,
+                  disabled: false,
+                  orderBy: PropertyFieldColumnPickerOrderBy.Title,
+                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                  properties: this.properties,
                   deferredValidationTime: 0,
-                  key: "termSetsPickerFieldId",
-                }),
+                  key: "columnsToShow2",
+                  displayHiddenColumns: false,
+                  columnReturnProperty: IColumnReturnProperty["Internal Name"],
+                  multiSelect: false,
+                }), PropertyFieldColumnPicker("columnsToShow3", {
+                  label: "Select column to show in bottom side",
+                  context: this.context as any,
+                  selectedColumn: this.properties.columnsToShow3,
+                  listId: this.properties.listId,
+                  disabled: false,
+                  orderBy: PropertyFieldColumnPickerOrderBy.Title,
+                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                  properties: this.properties,
+                  deferredValidationTime: 0,
+                  key: "columnsToShow3",
+                  displayHiddenColumns: false,
+                  columnReturnProperty: IColumnReturnProperty["Internal Name"],
+                  multiSelect: false,
+                })
               ],
             },
           ],

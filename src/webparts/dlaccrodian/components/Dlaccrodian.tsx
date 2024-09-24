@@ -2,7 +2,6 @@ import * as React from "react";
 import {
   useEffect,
   useState,
-  useRef,
   SyntheticEvent,
   useCallback,
 } from "react";
@@ -16,27 +15,14 @@ import "@pnp/sp/fields";
 import "@pnp/sp/items";
 import "@pnp/sp/site-users/web";
 import { spfi, SPFx } from "@pnp/sp";
-import { ICamlQuery } from "@pnp/sp/lists";
-import {
-  IPickerTerms,
-  TaxonomyPicker,
-} from "@pnp/spfx-controls-react/lib/TaxonomyPicker";
-
-import { IData } from "./types";
+// import { IData } from "./types";
 import Accordian from "./Accordian";
-import Card from "./Card";
+import Cards from "./Cards";
 
 const Dlaccrodian: React.FunctionComponent<IDlaccrodianProps> = (props) => {
   const [items, setitems] = useState([]);
   const [accordiansOpened, setAccordiansOpened] = useState<string[]>([]);
-  const [searchKeyWords, setSearchKeyWords] = useState<{
-    search: string;
-    termstore: IPickerTerms;
-  }>({
-    search: "",
-    termstore: [],
-  });
-  const imageref: any = useRef();
+  const [imageref, setImagevisble] = useState<number>(0);
   const sp = spfi().using(SPFx(props.context));
   //data from sp list
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -45,88 +31,40 @@ const Dlaccrodian: React.FunctionComponent<IDlaccrodianProps> = (props) => {
       .getById(props.listId)
       .items.select("*", "FileRef", "FileLeafRef", "EncodedAbsUrl")();
     setitems(response);
+    console.log("result ", response);
+    console.log("selected columns", props.listAccordianColumns);
+
+
+  }
+  async function getListItemsWithFilter(e: string) {
+
+    try {
+      const response: [] = await sp.web.lists
+        .getById(props.listId)
+        .items
+        .select("*", "FileRef", "FileLeafRef", "EncodedAbsUrl")
+        .filter(`substringof('${e}',FileLeafRef)`)()
+      setitems(response);
+    } catch (error) {
+      console.error("Error fetching list items:", error);
+    }
   }
 
-  async function inputOnchangeGetListItems() {
-    if (
-      searchKeyWords?.search.length < 0 &&
-      searchKeyWords?.termstore.length < 0
-    ) {
-      // eslint-disable-next-line no-void
-      void getlistitems();
-    }
-    if (searchKeyWords?.search.length > 0) {
-      imageref.current.style.display = "none";
-    } else {
-      imageref.current.style.display = "initial";
-    }
-    let termStoreTagQuery = "";
-    searchKeyWords.termstore.map((value, key) => {
-      termStoreTagQuery += `<Eq>
-         <FieldRef Name='Tag' />
-         <Value Type='TaxonomyFieldType'>${value?.name}</Value>
-      </Eq>`;
-    });
-    const secrchFileNameQuery = `${
-      searchKeyWords?.search.length > 0 ||
-      (searchKeyWords?.termstore.length > 0 &&
-        searchKeyWords?.search.length > 0)
-        ? "<And>"
-        : ""
-    }
-    ${
-      searchKeyWords?.search.length > 0
-        ? `  <Contains>
-         <FieldRef Name='FileLeafRef' />
-         <Value Type='File'>${searchKeyWords?.search}</Value>
-      </Contains>`
-        : ""
-    }
-      ${searchKeyWords?.termstore.length > 0 ? "<Or>" : ""}
-      ${termStoreTagQuery}
-      ${searchKeyWords?.termstore.length > 0 ? "</Or>" : ""}
-      ${
-        searchKeyWords?.search.length > 0 ||
-        (searchKeyWords?.termstore.length > 0 &&
-          searchKeyWords?.search.length > 0)
-          ? "</And>"
-          : ""
-      }`;
-    const caml: ICamlQuery = {
-      ViewXml: `<View>
-        <Query>
-   <Where>
-   ${secrchFileNameQuery}
-   </Where>
-   <OrderBy>
-      <FieldRef Name='FileLeafRef' Ascending='False' />
-   </OrderBy>
-</Query>
-</View>`,
-    };
 
-    console.log("camel query", caml);
 
-    let result: any = await sp.web.lists
-      .getById(props.listId)
-      .getItemsByCAMLQuery(caml);
-    setitems(result);
-    console.log("result from cample", result);
-  }
-
-  const groupBy = (data: IData[], key: string) => {
+  const groupBy = (data: any[], key: string) => {
     return data.reduce((acc, item) => {
-      const groupKey = item[key as keyof IData] as string;
+      const groupKey = item[key as keyof any] as string;
 
       if (!acc[groupKey]) {
         acc[groupKey] = { item: [], uniqueKey: "" };
       }
 
       acc[groupKey].item.push(item);
-      acc[groupKey].uniqueKey = item.GUID;
+      acc[groupKey].uniqueKey = item?.GUID;
 
       return acc;
-    }, {} as Record<string, { item: IData[]; uniqueKey: string }>);
+    }, {} as Record<string, { item: any[]; uniqueKey: string }>);
   };
 
   const handleToggle = useCallback(
@@ -141,9 +79,9 @@ const Dlaccrodian: React.FunctionComponent<IDlaccrodianProps> = (props) => {
   );
 
   const renderAccordian = useCallback(
-    (data: IData[], keys: string[], level = 0) => {
+    (data: any[], keys: string[], level = 0) => {
       if (level >= keys.length) {
-        return <Card content={data} />;
+        return <Cards content={data} column1={props.columnsToShow1} column2={props.columnsToShow2} column3={props.columnsToShow3} />;
       }
 
       const groupedData = groupBy(data, keys[level]);
@@ -157,11 +95,12 @@ const Dlaccrodian: React.FunctionComponent<IDlaccrodianProps> = (props) => {
             title={`${key} (${groupedData[key].item.length})`}
             isOpen={accordiansOpened.includes(uniqueKey)}
             onToggle={(e) => handleToggle(e, uniqueKey)}
+            isParent={level === 0}
           >
             {renderAccordian(groupedData[key].item, keys, level + 1)}
           </Accordian>
         ) : (
-          <Card content={data} />
+          <Cards content={data} column1={props.columnsToShow1} column2={props.columnsToShow2} column3={props.columnsToShow3} />
         );
       });
     },
@@ -169,14 +108,8 @@ const Dlaccrodian: React.FunctionComponent<IDlaccrodianProps> = (props) => {
   );
   useEffect(() => {
     // eslint-disable-next-line no-void
-    console.log("Terms", props.terms);
-
-    // eslint-disable-next-line no-void
     void getlistitems();
   }, []);
-  useEffect(() => {
-    void inputOnchangeGetListItems();
-  }, [searchKeyWords]);
   return (
     <>
       {items && (
@@ -189,44 +122,22 @@ const Dlaccrodian: React.FunctionComponent<IDlaccrodianProps> = (props) => {
                 id=""
                 placeholder="Search"
                 onChange={(e) => {
-                  if (e.target.value.length > 0) {
-                    setSearchKeyWords((prevState) => ({
-                      ...prevState,
-                      search: e.target.value,
-                    }));
-                  }
+                  setImagevisble(e.target.value.length)
+                  e.target.value.length > 0 ? getListItemsWithFilter(e.target.value) : getlistitems();
                 }}
+                className=""
               />
               <img
                 src={require("../assets/search.svg")}
-                ref={imageref}
                 alt=""
                 width={20}
                 height={20}
-                className={styles.searchIcon}
-              />
-            </div>
-            <div className={styles.termstoreInput}>
-              <TaxonomyPicker
-                allowMultipleSelections={true}
-                termsetNameOrID={props.terms[0]?.key}
-                placeholder="Select Term"
-                panelTitle="Select Term"
-                label=""
-                context={props.context as any}
-                onChange={(e: IPickerTerms) => {
-                  console.log("TermStore ", e);
-                  setSearchKeyWords((prevState) => ({
-                    ...prevState,
-                    termstore: e,
-                  }));
-                }}
-                isTermSetSelectable={false}
+                className={`{${styles.searchIcon}  ${imageref > 0 ? styles.searchInputDisable : styles.searchInputShow}`}
               />
             </div>
           </div>
           <div className={styles.accordianContent}>
-            {renderAccordian(items as IData[], props.listAccordianColumns)}
+            {renderAccordian(items as any[], props.listAccordianColumns)}
           </div>
         </div>
       )}

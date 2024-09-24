@@ -1,19 +1,30 @@
 import * as React from "react";
-import { IData } from "./types";
+// import { IData } from "./types";
 import styles from './Dlaccrodian.module.scss';
-function Card({ content }: Readonly<{ content: IData[] }>) {
+import { FileIcon, defaultStyles } from "react-file-icon";
+
+
+function Card({ data, Column1, Column2, Column3 }: Readonly<{ data: any, Column1: string, Column2: string, Column3: string }>) {
+    const ext = getFileExtension(data.FileLeafRef);
+    console.log("column names", Column1, Column2, Column3);
+
     return (
-        <>
-            {content.map((e) => (
-                <div key={e.ID} className={styles.card}>
-                    <a href={e.ServerRedirectedEmbedUrl} style={{ paddingRight: "10px" }}>{e.FileLeafRef}</a>
-                    <p style={{ paddingRight: "10px" }}>{e.Category}</p>
-                    <p style={{ paddingRight: "10px" }}>{e.Subcategory}</p>
-                    <button onClick={() => window.open(e.ServerRedirectedEmbedUrl)} className={styles.vewbutton}>View</button>
-                </div>
-            ))}
-        </>
+        <div className={styles.card}>
+            <div className={styles.icon} onClick={() => window.open(data.ServerRedirectedEmbedUrl)}>
+                <FileIcon extension={ext} {...defaultStyles[ext]} />
+                <h3 className={styles.title}>{data?.FileLeafRef}</h3>
+            </div>
+
+            <div className={styles.content}>
+                <p className={styles.sopRefrence}>{data?.[Column1]}</p>
+                <p className={styles.location}>{data?.[Column2]}</p>
+            </div>
+            <p>Last updated : {new Date(data?.[Column3]).toLocaleDateString("en-US")}</p>
+        </div>
     );
+}
+function getFileExtension(filename: string) {
+    return filename.substring(filename.lastIndexOf(".") + 1);
 }
 
 

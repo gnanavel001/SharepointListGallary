@@ -14,9 +14,14 @@ export interface IData {
   OData__ColorTag: null;
   ComplianceAssetId: null;
   Title: null | string;
-  Category: string;
-  Subcategory: string;
-  Subcategory1: string;
+  Process: string;
+  Subprocess: string;
+  "Last Updated": string;
+  sample: string;
+  Location: string;
+  "SOP Version": string;
+  "Approved by": string;
+  Nature: string;
   ID: number;
   Created: string;
   AuthorId: number;
